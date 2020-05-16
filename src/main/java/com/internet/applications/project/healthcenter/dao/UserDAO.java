@@ -34,11 +34,20 @@ public class UserDAO  {
         userCrud.create(user);
     }
 
-    public User getUserWithPesel(String pesel) {
+    public List<User> getAllDoctors() {
+        return jdbcTemplate.query(
+                "SELECT id, fname, lname, pesel, email, phonenumber, password, type " +
+                        "FROM users " +
+                        "WHERE type = ? "
+                ,
+                preparedStatement -> preparedStatement.setString(1, "doc"),
+                userRowMapper);
+    }
+    public User getUserWithEmail(String pesel) {
         List<User> users = jdbcTemplate.query(
                 "SELECT id, fname, lname, pesel, email, phonenumber, password, type " +
-                        "FROM users" +
-                        "WHERE pesel = ? "
+                        "FROM users " +
+                        "WHERE Email = ? "
                 ,
                 preparedStatement -> preparedStatement.setString(1, pesel),
                 userRowMapper);

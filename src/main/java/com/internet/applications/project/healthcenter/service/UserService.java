@@ -39,8 +39,8 @@ public class UserService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String pesel) throws UsernameNotFoundException {
-        User user = userDAO.getUserWithPesel(pesel);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userDAO.getUserWithEmail(email);
         return new UserAuthDetails(user);
     }
 }

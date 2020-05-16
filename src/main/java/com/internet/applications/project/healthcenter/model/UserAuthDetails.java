@@ -31,7 +31,7 @@ public class UserAuthDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return "" + user.getPesel();
+        return user.getEmail();
     }
 
     @Override

@@ -31,6 +31,17 @@ public class UserController {
             @RequestParam String password
     ) {
         userService.addNewUser(firstname, lastname, pesel, phonenumber, email, password);
-        return "home";
+        return "login";
+    }
+
+    @GetMapping("/login")
+    public String loginPage(@RequestParam(required = false) String registeredUser) {
+        return "login";
+    }
+
+    @GetMapping("/doctors")
+    public String doctorsPage() {
+
+        return "schedule";
     }
 }
