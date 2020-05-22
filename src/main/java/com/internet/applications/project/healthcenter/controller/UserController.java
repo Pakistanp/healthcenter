@@ -1,5 +1,6 @@
 package com.internet.applications.project.healthcenter.controller;
 
+import com.internet.applications.project.healthcenter.model.User;
 import com.internet.applications.project.healthcenter.service.UserService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +9,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.ModelAndViewDefiningException;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -40,8 +46,11 @@ public class UserController {
     }
 
     @GetMapping("/doctors")
-    public String doctorsPage() {
-
-        return "schedule";
+    public ModelAndView doctorsPage(HttpServletRequest request) {
+        ModelAndView modelAndView = new ModelAndView("doctors");
+        List<User> doctors = userService.getAllDoctors();
+        modelAndView.addObject("doctors", doctors);
+        modelAndView.addObject("userId", userService.getUserByUsername(request.getRemoteUser()).getId());
+        return modelAndView;
     }
 }

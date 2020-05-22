@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org">
+<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+<head>
+    <meta charset="UTF-8">
+    <title>Register in Health Center!</title>
+</head>
+<body>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th scope="col">Doctor name</th>
+            </tr>
+        </thead>
+        <tbody>
+            <div th:each="doctor : ${doctors}">
+                <tr>
+                    <td>
+                        <a th:href="@{/doctor/{doctorId}/schedule/{userId} (doctorId=${doctor.getId()}, userId=${userId})}">
+                            <div style="height:100%;width:100%" th:text="${doctor.firstName} + ' ' + ${doctor.lastName}"/>
+                        </a>
+                    </td>
+                </tr>
+            </div>
+        </tbody>
+    </table>
+</body>
+</html>

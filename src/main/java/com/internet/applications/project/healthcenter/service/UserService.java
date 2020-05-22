@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UserService implements UserDetailsService {
@@ -42,5 +44,12 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userDAO.getUserWithEmail(email);
         return new UserAuthDetails(user);
+    }
+    public User getUserByUsername(String email){
+        User user = userDAO.getUserWithEmail(email);
+        return user;
+    }
+    public List<User> getAllDoctors() {
+        return userDAO.getAllDoctors();
     }
 }

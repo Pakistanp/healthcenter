@@ -20,7 +20,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity security) throws Exception {
         security.authorizeRequests()
                 .antMatchers("/").authenticated()
-                .antMatchers("/user-start-page").authenticated()
+                .antMatchers("/doctors").authenticated()
                 .and()
                 .formLogin()
                 .loginPage("/login")

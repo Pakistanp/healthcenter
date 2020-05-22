@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org">
+<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+<head>
+    <meta charset="UTF-8">
+    <title>Register in Health Center!</title>
+</head>
+<body>
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <th scope="col">TIME</th>
+        <th scope="col">Monday</th>
+        <th scope="col">Tuesday</th>
+        <th scope="col">Wednesday</th>
+        <th scope="col">Thursday</th>
+        <th scope="col">Friday</th>
+        <th scope="col">Saturday</th>
+        <th scope="col">Sunday</th>
+    </tr>
+    </thead>
+    <tbody>
+        <div th:each="scheduleCol : ${schedulesHourCollection}">
+            <tr>
+                <div th:each="schedule : ${scheduleCol.schedules}">
+                    <td th:if="${schedule.dayOfWeek} == 1">
+                        <div th:text="${schedule.time}"/>
+                    </td>
+
+                    <td th:if="${schedule.schedule} == null">
+                        <form class="form-horizontal" action='' th:action="@{/doctor/{doctorId}/schedule/{userId}/{day}/{time} (doctorId=${docId},
+                             userId=${userId}, day=${schedule.dayOfWeek}, time=${schedule.time})}" method="POST">
+                            <button style="height:100%;width:100%">Book</button>
+                        </form>
+                    </td>
+                    <td th:if="${schedule.schedule} != null and ${schedule.schedule.patientId} == ${userId}" BGCOLOR="green">
+                        Reserved By you
+                        <a th:href="@{/doctor/{doctorId}/schedule/{userId}/delete/{scheduleId} (doctorId=${schedule.schedule.doctorId},
+                         userId=${userId},
+                         scheduleId=${schedule.schedule.id})}">
+                                <div style="height:100%;width:100%" th:text="DELETE"/>
+                        </a>
+                    </td>
+                    <td th:if="${schedule.schedule} != null and ${schedule.schedule.patientId} != ${userId}" BGCOLOR="red">
+                        Reserved
+                    </td>
+                </div>
+            </tr>
+        </div>
+    </tbody>
+</table>
+</body>
+</html>
