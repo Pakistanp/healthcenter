@@ -9,6 +9,19 @@
     <title>Register in Health Center!</title>
 </head>
 <body>
+<div align="center">
+    <a th:href="@{/doctor/{doctorId}/schedule/{userId}?action=prev&shiftWeeks={shiftWeeks} (doctorId=${docId},
+                         userId=${userId}, shiftWeeks=${schedulesHourCollection[0].shiftWeeks})}">
+        <button type="button"><-</button>
+    </a>
+    <span th:text="${schedulesHourCollection[0].schedules[0].schedule.startDate.toLocalDate()}"/>
+    -
+    <span th:text="${schedulesHourCollection[0].schedules[6].schedule.startDate.toLocalDate()}"/>
+    <a th:href="@{/doctor/{doctorId}/schedule/{userId}?action=next&shiftWeeks={shiftWeeks} (doctorId=${docId},
+                         userId=${userId}, shiftWeeks=${schedulesHourCollection[0].shiftWeeks})}">
+        <button type="button">-></button>
+    </a>
+</div>
 <table class="table table-bordered">
     <thead>
     <tr>
@@ -30,18 +43,20 @@
                         <div th:text="${schedule.time}"/>
                     </td>
 
-                    <td th:if="${schedule.schedule} == null">
-                        <form class="form-horizontal" action='' th:action="@{/doctor/{doctorId}/schedule/{userId}/{day}/{time} (doctorId=${docId},
-                             userId=${userId}, day=${schedule.dayOfWeek}, time=${schedule.time})}" method="POST">
-                            <button style="height:100%;width:100%">Book</button>
+                    <td th:if="${schedule.schedule.id} == -1 and ${schedule.dayOfWeek} != 7">
+                        <form class="form-horizontal" action='' th:action="@{/doctor/{doctorId}/schedule/{userId}?date={startDate}&shiftWeeks={shiftWeeks} (doctorId=${docId},
+                             userId=${userId}, startDate=${schedule.schedule.startDate}, shiftWeeks=${scheduleCol.shiftWeeks})}" method="POST" >
+                            <button style="height:100%;width:100%; display: inline-block;">Book</button>
                         </form>
                     </td>
-                    <td th:if="${schedule.schedule} != null and ${schedule.schedule.patientId} == ${userId}" BGCOLOR="green">
+                    <td th:if="${schedule.schedule.id} == -1 and ${schedule.dayOfWeek} == 7" BGCOLOR="orange"></td>
+                    <td th:if="${schedule.schedule.id} != -1 and ${schedule.schedule.patientId} == ${userId}" BGCOLOR="green">
                         Reserved By you
-                        <a th:href="@{/doctor/{doctorId}/schedule/{userId}/delete/{scheduleId} (doctorId=${schedule.schedule.doctorId},
+                        <a th:href="@{/doctor/{doctorId}/schedule/{userId}/{scheduleId}?shiftWeeks={shiftWeeks} (doctorId=${schedule.schedule.doctorId},
                          userId=${userId},
-                         scheduleId=${schedule.schedule.id})}">
-                                <div style="height:100%;width:100%" th:text="DELETE"/>
+                         scheduleId=${schedule.schedule.id},
+                         shiftWeeks=${scheduleCol.shiftWeeks})} " >
+                                <span style="height:100%;width:100%" th:text="DELETE"/>
                         </a>
                     </td>
                     <td th:if="${schedule.schedule} != null and ${schedule.schedule.patientId} != ${userId}" BGCOLOR="red">

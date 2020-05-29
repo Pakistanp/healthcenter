@@ -6,9 +6,12 @@ import org.simpleflatmapper.jdbc.spring.JdbcTemplateCrud;
 import org.simpleflatmapper.jdbc.spring.JdbcTemplateMapperFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -47,6 +50,22 @@ public class ScheduleDAO {
     }
 
     public List<Schedule> findWeekByDoctorIdAndDate(int id, LocalDateTime now, LocalDateTime plusDays) {
-        return null;
+        return jdbcTemplate.query(
+                "SELECT id, startdate, doctor_id, patient_id " +
+                        "FROM schedule " +
+                        "WHERE doctor_id = ? AND startdate BETWEEN ? AND ?"
+                , new PreparedStatementSetter() {
+                    @Override
+                    public void setValues(PreparedStatement ps) throws SQLException {
+                        ps.setInt(1, id);
+                        ps.setString(2, now.toLocalDate().toString());
+                        ps.setString(3, plusDays.toLocalDate().toString());
+                    }
+                },
+                scheduleRowMapper);
+    }
+
+    public void deleteSchedule(int scheduleId) {
+        scheduleCrud.delete(scheduleId);
     }
 }

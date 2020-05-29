@@ -8,13 +8,11 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,18 +23,40 @@ public class ScheduleController {
     @NonNull
     private final ScheduleService scheduleService;
 
-    @GetMapping("/doctor/{dId}/schedule/{pId}")
-    public ModelAndView scheduleDoctorPage(@PathVariable("dId") int dId, @PathVariable("pId") int pId)  {
+    @GetMapping(value = "/doctor/{dId}/schedule/{pId}")
+    public ModelAndView scheduleDoctorPage(@PathVariable("dId") int dId, @PathVariable("pId") int pId,
+                                           @RequestParam(name = "action", required = false) String action, @RequestParam(name = "shiftWeeks", required = false, defaultValue = "0") int shiftWeeks)  {
         ModelAndView modelAndView = new ModelAndView("schedule");
-        List<ScheduleHourCollection> schedulesHourCollection = scheduleService.createSchedule(dId);
+        List<ScheduleHourCollection> schedulesHourCollection = scheduleService.createWeekSchedule(dId, pId, action, shiftWeeks);
         modelAndView.addObject( "schedulesHourCollection", schedulesHourCollection);
         modelAndView.addObject("userId", pId);
         modelAndView.addObject("docId", dId);
         return modelAndView;
     }
 
-    @PostMapping("/doctor/{dId}/schedule/{pId}/{day}/{time}")
-    public String scheduleCreate(@PathVariable("dId") int dId, @PathVariable("pId") int pId, @PathVariable("day") int dayOfWeek) {
-        return "home";
+    @PostMapping(value = "/doctor/{dId}/schedule/{pId}")
+    public ModelAndView createSchedule(@PathVariable("dId") int doctorId, @PathVariable("pId") int patientId,
+                                       @RequestParam(name = "date", required = false) String localDateTime,
+                                       @RequestParam(name = "shiftWeeks", required = false, defaultValue = "0") int shiftWeeks)  {
+        scheduleService.createSchedule(doctorId, patientId, localDateTime);
+        ModelAndView modelAndView = new ModelAndView("schedule");
+        List<ScheduleHourCollection> schedulesHourCollection = scheduleService.createWeekSchedule(doctorId, patientId, null, shiftWeeks);
+        modelAndView.addObject( "schedulesHourCollection", schedulesHourCollection);
+        modelAndView.addObject("userId", patientId);
+        modelAndView.addObject("docId", doctorId);
+        return modelAndView;
+    }
+
+    @GetMapping(value = "/doctor/{dId}/schedule/{pId}/{sId}")
+    public ModelAndView createSchedule(@PathVariable("dId") int doctorId, @PathVariable("pId") int patientId,
+                                       @PathVariable("sId") int scheduleId,
+                                       @RequestParam(name = "shiftWeeks", required = false, defaultValue = "0") int shiftWeeks)  {
+        scheduleService.deleteSchedule(scheduleId);
+        ModelAndView modelAndView = new ModelAndView("schedule");
+        List<ScheduleHourCollection> schedulesHourCollection = scheduleService.createWeekSchedule(doctorId, patientId, null, shiftWeeks);
+        modelAndView.addObject( "schedulesHourCollection", schedulesHourCollection);
+        modelAndView.addObject("userId", patientId);
+        modelAndView.addObject("docId", doctorId);
+        return modelAndView;
     }
 }

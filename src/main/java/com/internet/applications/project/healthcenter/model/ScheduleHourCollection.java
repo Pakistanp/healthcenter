@@ -9,6 +9,10 @@ import java.util.List;
 @Builder
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ScheduleHourCollection {
+
+    @Setter(AccessLevel.NONE)
+    private final int shiftWeeks;
+
     @Setter(AccessLevel.NONE)
     private final List<ScheduleHour> schedules;
 }

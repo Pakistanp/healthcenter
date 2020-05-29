@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,18 +31,32 @@ public class ScheduleService {
         return scheduleDAO.findWeekByDoctorIdAndDate(id, now, now.plusDays(6));
     }
 
-    public List<ScheduleHourCollection> createSchedule(int id) {
-        List<Schedule> scheduleList = findByDoctorId(id);
-        //List<Schedule> schedulesWeek = findWeekByDoctorIdAndDate(id, LocalDateTime.now());
+    public List<ScheduleHourCollection> createWeekSchedule(int did, int pid, String action, int shiftWeeks) {
+        LocalDateTime localDateTime = LocalDateTime.now();
+        if (action != null) {
+            if ("prev".equals(action)) {
+                shiftWeeks--;
+            }
+            if ("next".equals(action)) {
+                shiftWeeks++;
+            }
+        }
+        localDateTime = localDateTime.plusWeeks(shiftWeeks);
+
+        List<Schedule> schedulesWeek = findWeekByDoctorIdAndDate(did, localDateTime);
         List<ScheduleHourCollection> scheduleHourListCollection = new ArrayList<>();
         for (LocalTime localTime = LocalTime.of(8, 00); localTime.isBefore(LocalTime.of(15, 59)); localTime = localTime.plusMinutes(30)) {
             List<ScheduleHour> scheduleHourList = new ArrayList<>();
             for (int dayOfWeek = 1 ; dayOfWeek <= 7 ; dayOfWeek++) {
-                Schedule schedule = getScheduleByDayOfWeekAndTime(scheduleList, dayOfWeek, localTime);
+                Schedule schedule = getScheduleByDayOfWeekAndTime(schedulesWeek, dayOfWeek, localTime);
+                if (schedule == null) {
+                    schedule = new Schedule(-1, LocalDateTime.of(localDateTime.minusDays(localDateTime.getDayOfWeek().getValue() - 1)
+                            .plusDays(dayOfWeek - 1).toLocalDate(), localTime), did, pid);
+                }
                 ScheduleHour scheduleHour = new ScheduleHour(localTime.toString() + " - " + localTime.plusMinutes(30).toString() , dayOfWeek, schedule);
                 scheduleHourList.add(scheduleHour);
             }
-            scheduleHourListCollection.add(new ScheduleHourCollection(scheduleHourList));
+            scheduleHourListCollection.add(new ScheduleHourCollection(shiftWeeks, scheduleHourList));
         }
         return scheduleHourListCollection;
     }
@@ -56,5 +71,15 @@ public class ScheduleService {
             }
         }
         return newSchedule;
+    }
+
+    public void createSchedule(int doctorId, int patientId, String localDateTime) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+        LocalDateTime dateTime = LocalDateTime.parse(localDateTime, formatter);
+        scheduleDAO.createSchedule(new Schedule(1, dateTime, doctorId, patientId));
+    }
+
+    public void deleteSchedule(int scheduleId) {
+        scheduleDAO.deleteSchedule(scheduleId);
     }
 }
