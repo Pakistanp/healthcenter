@@ -25,7 +25,6 @@ public class Visit {
     @Column("file_path")
     private final String filePath;
 
-    @NonNull
     @Setter(AccessLevel.NONE)
     @Column("schedule_id")
     private final int scheduleId;

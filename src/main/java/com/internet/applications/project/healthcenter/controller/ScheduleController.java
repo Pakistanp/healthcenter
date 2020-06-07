@@ -4,6 +4,7 @@ import com.internet.applications.project.healthcenter.model.Schedule;
 import com.internet.applications.project.healthcenter.model.ScheduleHour;
 import com.internet.applications.project.healthcenter.model.ScheduleHourCollection;
 import com.internet.applications.project.healthcenter.service.ScheduleService;
+import com.internet.applications.project.healthcenter.service.UserService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,8 @@ public class ScheduleController {
 
     @NonNull
     private final ScheduleService scheduleService;
+    @NonNull
+    private final UserService userService;
 
     @GetMapping(value = "/doctor/{dId}/schedule/{pId}")
     public ModelAndView scheduleDoctorPage(@PathVariable("dId") int dId, @PathVariable("pId") int pId,
@@ -50,8 +53,10 @@ public class ScheduleController {
     @GetMapping(value = "/doctor/{dId}/schedule/{pId}/{sId}")
     public ModelAndView deleteSchedule(@PathVariable("dId") int doctorId, @PathVariable("pId") int patientId,
                                        @PathVariable("sId") int scheduleId,
-                                       @RequestParam(name = "shiftWeeks", required = false, defaultValue = "0") int shiftWeeks)  {
-        scheduleService.deleteSchedule(scheduleId);
+                                       @RequestParam(name = "shiftWeeks", required = false, defaultValue = "0") int shiftWeeks,
+                                       HttpServletRequest request)  {
+        int userId = userService.getUserByUsername(request.getRemoteUser()).getId();
+        scheduleService.deleteSchedule(scheduleId, userId);
         ModelAndView modelAndView = new ModelAndView("schedule");
         List<ScheduleHourCollection> schedulesHourCollection = scheduleService.createWeekSchedule(doctorId, patientId, null, shiftWeeks);
         modelAndView.addObject( "schedulesHourCollection", schedulesHourCollection);
