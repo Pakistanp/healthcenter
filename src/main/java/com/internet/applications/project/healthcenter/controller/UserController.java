@@ -49,8 +49,10 @@ public class UserController {
     public ModelAndView doctorsPage(HttpServletRequest request) {
         ModelAndView modelAndView = new ModelAndView("doctors");
         List<User> doctors = userService.getAllDoctors();
+        User user = userService.getUserByUsername(request.getRemoteUser());
         modelAndView.addObject("doctors", doctors);
-        modelAndView.addObject("userId", userService.getUserByUsername(request.getRemoteUser()).getId());
+        modelAndView.addObject("userId", user.getId());
+        modelAndView.addObject("role", user.getType());
         return modelAndView;
     }
 }

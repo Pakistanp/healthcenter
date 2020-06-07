@@ -1,6 +1,7 @@
 package com.internet.applications.project.healthcenter.controller;
 
 import com.internet.applications.project.healthcenter.model.Schedule;
+import com.internet.applications.project.healthcenter.model.User;
 import com.internet.applications.project.healthcenter.model.VisitDetails;
 import com.internet.applications.project.healthcenter.service.UserService;
 import com.internet.applications.project.healthcenter.service.VisitService;
@@ -42,27 +43,34 @@ public class VisitController {
 
     @GetMapping("/visits")
     public ModelAndView homePage(HttpServletRequest request) {
-        int userId = userService.getUserByUsername(request.getRemoteUser()).getId();
-        List<VisitDetails> myVisits = visitService.getVisitsByUserId(userId);
+        User user = userService.getUserByUsername(request.getRemoteUser());
+        List<VisitDetails> myVisits = visitService.getVisitsByUserId(user.getId());
         ModelAndView modelAndView = new ModelAndView("visit");
         modelAndView.addObject("mode", "MODE_SHOW_VISITS");
         modelAndView.addObject("visits", myVisits);
+        modelAndView.addObject("role", user.getType());
         return modelAndView;
     }
     @GetMapping("/visit/{visitId}")
-    public ModelAndView visitPage(@PathVariable("visitId") int visitId, @RequestParam(value = "schedule") int scheduleId) {
+    public ModelAndView visitPage(@PathVariable("visitId") int visitId, @RequestParam(value = "schedule") int scheduleId,
+                                  HttpServletRequest request) {
+        User user = userService.getUserByUsername(request.getRemoteUser());
         ModelAndView modelAndView = new ModelAndView("visit");
         modelAndView.addObject("visitId", visitId);
         modelAndView.addObject("scheduleId", scheduleId);
         modelAndView.addObject("mode", "MODE_VISIT");
+        modelAndView.addObject("role", user.getType());
         return modelAndView;
     }
 
     @PostMapping("/visit/{visitId}")
     public String saveVisit(@RequestParam("file") MultipartFile file, @RequestParam(value = "schedule") int scheduleId ,
-                            @RequestParam("diagnosis") String diagnosis, @PathVariable("visitId") int visitId) {
+                            @RequestParam("diagnosis") String diagnosis, @PathVariable("visitId") int visitId,
+                            HttpServletRequest request) {
         visitService.createOrUpdateVisit(visitId, scheduleId, diagnosis, file);
+        User user = userService.getUserByUsername(request.getRemoteUser());
         ModelAndView modelAndView = new ModelAndView("visit");
+        modelAndView.addObject("role", user.getType());
 
         return "redirect:/";
     }
