@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org">
+<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+<head>
+    <meta charset="UTF-8">
+    <title>Register in Health Center!</title>
+</head>
+<body>
+<div th:if="${mode} == 'MODE_SHOW_VISITS'">
+    <div>
+        <legend class="">Visits</legend>
+    </div>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th scope="col">Doctor name</th>
+            <th scope="col">Start date</th>
+            <th scope="col">Show visit</th>
+        </thead>
+        <tbody>
+            <div th:each="visit : ${visits}">
+                <tr>
+                    <td>
+                        <div th:text="${visit.name}"/>
+                    </td>
+                    <td>
+                        <div th:text="${visit.time}"/>
+                    </td>
+                    <td>
+                        <a th:href="@{/visit/{visitId}?schedule={scheduleId} (visitId=${visit.visitId}, scheduleId=${visit.scheduleId})}">
+                            <div style="height:100%;width:100%" th:text="SHOW"/>
+                        </a>
+                    </td>
+                </tr>
+            </div>
+        </tbody>
+    </table>
+</div>
+<div th:if="${mode} == 'MODE_VISIT'">
+    <form class="form-horizontal" action='' th:action="@{/visit/{visitId}?schedule={scheduleId} (visitId=${visitId}, scheduleId=${scheduleId})}" method="POST" enctype="multipart/form-data">
+        <fieldset>
+            <div id="legend">
+                <legend class="">Visit</legend>
+            </div>
+            <div class="control-group">
+                <!-- First name -->
+                <label class="control-label" >Diagnose</label>
+                <div class="controls">
+                    <input type="text" id="diagnosis" name="diagnosis" placeholder="" class="input-xlarge">
+                </div>
+            </div>
+            <input type="file" name="file" />
+            <a th:href="@{/visit?id={visitId} (visitId=${visitId})}">
+                Open File
+            </a>
+            <div class="control-group">
+                <!-- Button -->
+                <div class="controls">
+                    <button class="btn btn-success">Save</button>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
+</body>
+</html>

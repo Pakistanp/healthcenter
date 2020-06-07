@@ -45,6 +45,16 @@ public class ScheduleDAO {
                 scheduleRowMapper);
     }
 
+    public List<Schedule> findById(int id) {
+        return jdbcTemplate.query(
+                "SELECT id, startdate, doctor_id, patient_id " +
+                        "FROM schedule " +
+                        "WHERE id = ? "
+                ,
+                preparedStatement -> preparedStatement.setInt(1, id),
+                scheduleRowMapper);
+    }
+
     public void createSchedule(Schedule schedule) {
         scheduleCrud.create(schedule);
     }
@@ -67,5 +77,15 @@ public class ScheduleDAO {
 
     public void deleteSchedule(int scheduleId) {
         scheduleCrud.delete(scheduleId);
+    }
+
+    public List<Schedule> findByPatientId(int id) {
+        return jdbcTemplate.query(
+                "SELECT id, startdate, doctor_id, patient_id " +
+                        "FROM schedule " +
+                        "WHERE patient_id = ? "
+                ,
+                preparedStatement -> preparedStatement.setInt(1, id),
+                scheduleRowMapper);
     }
 }

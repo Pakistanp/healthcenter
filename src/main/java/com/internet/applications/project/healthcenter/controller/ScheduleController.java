@@ -48,7 +48,7 @@ public class ScheduleController {
     }
 
     @GetMapping(value = "/doctor/{dId}/schedule/{pId}/{sId}")
-    public ModelAndView createSchedule(@PathVariable("dId") int doctorId, @PathVariable("pId") int patientId,
+    public ModelAndView deleteSchedule(@PathVariable("dId") int doctorId, @PathVariable("pId") int patientId,
                                        @PathVariable("sId") int scheduleId,
                                        @RequestParam(name = "shiftWeeks", required = false, defaultValue = "0") int shiftWeeks)  {
         scheduleService.deleteSchedule(scheduleId);

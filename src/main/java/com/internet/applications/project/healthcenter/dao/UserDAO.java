@@ -53,4 +53,14 @@ public class UserDAO  {
                 userRowMapper);
         return users.get(0);
     }
+
+    public User getByUserId(int id) {
+        return jdbcTemplate.query(
+                "SELECT id, fname, lname, pesel, email, phonenumber, password, type " +
+                        "FROM users " +
+                        "WHERE id = ? "
+                ,
+                preparedStatement -> preparedStatement.setInt(1, id),
+                userRowMapper).get(0);
+    }
 }
