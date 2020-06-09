@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -81,7 +82,6 @@ public class VisitService {
 
     public ResponseEntity<InputStreamResource> openFile(int visitId) throws IOException {
         Visit visit = visitDAO.findById(visitId).get(0);
-        //ClassPathResource pdfFile = new ClassPathResource("/files/Piotr_Papierz_148874.pdf");
         ClassPathResource pdfFile = new ClassPathResource(OPEN_FOLDER + visit.getFilePath());
         return ResponseEntity
                 .ok()
@@ -114,11 +114,29 @@ public class VisitService {
                 user = userDAO.getByUserId(schedule.getPatientId());
             }
             String name = user.getFirstName() + " " + user.getLastName();
-            List<Visit> visitList = visitDAO.findByScheduleId(schedule.getId());
+            List<Visit> visitList = getVisitByScheduleId(schedule.getId());
             Visit visit = visitList != null && visitList.size() > 0 ? visitList.get(0) : null;
             visitDetailsList.add(new VisitDetails(name ,schedule.getStartDate().toLocalDate().toString() + " " + schedule.getStartDate().toLocalTime().toString(),
                     schedule.getId(), visit != null && visit.getId() > 0 ? visit.getId() : 0));
         }
         return visitDetailsList;
+    }
+
+    public Visit getVisitById(int id) {
+        List<Visit> visits = visitDAO.findById(id);
+        return visits != null && visits.size() > 0 ? visits.get(0) : null;
+    }
+
+    public List<Visit> getVisitByScheduleId(int id) {
+        return visitDAO.findByScheduleId(id);
+    }
+
+    public HashMap<Integer, Visit> getVisitsAllVisits() {
+        HashMap<Integer, Visit> allVisits = new HashMap<>();
+        List<Visit> visits = visitDAO.getAllVisits();
+        for (Visit visit : visits) {
+            allVisits.put(visit.getScheduleId(),visit);
+        }
+        return allVisits;
     }
 }

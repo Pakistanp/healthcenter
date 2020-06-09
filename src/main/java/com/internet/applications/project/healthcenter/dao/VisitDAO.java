@@ -15,7 +15,7 @@ import java.util.List;
 public class VisitDAO {
 
     @NonNull
-    private final RowMapper<Visit> scheduleRowMapper = JdbcTemplateMapperFactory.newInstance().newRowMapper(Visit.class);
+    private final RowMapper<Visit> visitRowMapper = JdbcTemplateMapperFactory.newInstance().newRowMapper(Visit.class);
 
     @NonNull
     private final JdbcTemplate jdbcTemplate;
@@ -44,7 +44,7 @@ public class VisitDAO {
                         "WHERE id = ? "
                 ,
                 preparedStatement -> preparedStatement.setInt(1, id),
-                scheduleRowMapper);
+                visitRowMapper);
     }
 
     public List<Visit> findByScheduleId(int id) {
@@ -54,6 +54,14 @@ public class VisitDAO {
                         "WHERE schedule_id = ? "
                 ,
                 preparedStatement -> preparedStatement.setInt(1, id),
-                scheduleRowMapper);
+                visitRowMapper);
+    }
+
+    public List<Visit> getAllVisits() {
+        return jdbcTemplate.query(
+                "SELECT id, diagnosis, file_path, schedule_id " +
+                        "FROM visits "
+                ,
+                visitRowMapper);
     }
 }

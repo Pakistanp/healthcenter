@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://thymeleaf.org">
-<!-- Bootstrap CSS -->
+
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 
-<!------ Include the above in your HEAD tag ---------->
+
 <head>
     <meta charset="UTF-8">
     <title>Register in Health Center!</title>
@@ -20,10 +20,12 @@
             <a class="nav-item nav-link" href="/">Home</a>
             <a class="nav-item nav-link active" href="#">Doctors <span class="sr-only">(current)</span></a>
             <a class="nav-item nav-link" href="/visits">My Visits</a>
+            <a class="nav-item nav-link" href="/logout">Logout</a>
         </div>
         <div class="navbar-nav" th:if="${role} == 'doc'">
             <a class="nav-item nav-link" href="/">Home</a>
             <a class="nav-item nav-link active" href="#">Schedule <span class="sr-only">(current)</span></a>
+            <a class="nav-item nav-link" href="/logout">Logout</a>
         </div>
     </div>
 </nav>
@@ -62,14 +64,17 @@
                         <div th:text="${schedule.time}"/>
                     </td>
 
-                    <td th:if="${schedule.schedule.id} == -1 and ${schedule.dayOfWeek} != 7">
+                    <td th:if="${schedule.schedule.id} == -1 and ${schedule.dayOfWeek} != 7 and ${role} == 'user'">
                         <form class="form-horizontal" action='' th:action="@{/doctor/{doctorId}/schedule/{userId}?date={startDate}&shiftWeeks={shiftWeeks} (doctorId=${docId},
                              userId=${userId}, startDate=${schedule.schedule.startDate}, shiftWeeks=${scheduleCol.shiftWeeks})}" method="POST" >
                             <button style="height:100%;width:100%; display: inline-block;">Book</button>
                         </form>
                     </td>
+                    <td th:if="${schedule.schedule.id} == -1 and ${schedule.dayOfWeek} != 7 and ${role} == 'doc'">
+
+                    </td>
                     <td th:if="${schedule.schedule.id} == -1 and ${schedule.dayOfWeek} == 7" BGCOLOR="orange"></td>
-                    <td th:if="${schedule.schedule.id} != -1 and ${schedule.schedule.patientId} == ${userId}" BGCOLOR="green">
+                    <td th:if="${schedule.schedule.id} != -1 and ${schedule.schedule.patientId} == ${userId} and ${role} == 'user'" BGCOLOR="green">
                         Reserved By you
                         <a th:href="@{/doctor/{doctorId}/schedule/{userId}/{scheduleId}?shiftWeeks={shiftWeeks} (doctorId=${schedule.schedule.doctorId},
                          userId=${userId},
@@ -78,7 +83,21 @@
                                 <span style="height:100%;width:100%" th:text="DELETE"/>
                         </a>
                     </td>
-                    <td th:if="${schedule.schedule} != null and ${schedule.schedule.patientId} != ${userId}" BGCOLOR="red">
+                    <td th:if="${schedule.schedule.id} != -1 and ${role} == 'doc'">
+                       <span style="height:100%;width:100%" th:text="${patients.get(schedule.schedule.patientId).getFirstName()} + ' '
+                            + ${patients.get(schedule.schedule.patientId).getLastName()}"/>
+                        <a th:href="@{/doctor/{doctorId}/schedule/{userId}/{scheduleId}?shiftWeeks={shiftWeeks} (doctorId=${schedule.schedule.doctorId},
+                         userId=${userId},
+                         scheduleId=${schedule.schedule.id},
+                         shiftWeeks=${scheduleCol.shiftWeeks})} " >
+                            <span style="height:100%;width:100%" th:text="DELETE"/>
+                        </a>
+                        <a th:href="@{/visit/{visitId}?schedule={scheduleId} (visitId=${visits.get(schedule.schedule.id) != null ? visits.get(schedule.schedule.id).getId() : 0},
+                            scheduleId=${schedule.schedule.id})}" >
+                            <span style="height:100%;width:100%" th:text="SHOW"/>
+                        </a>
+                    </td>
+                    <td th:if="${schedule.schedule} != null and ${schedule.schedule.patientId} != ${userId} and ${role} == 'user'" BGCOLOR="red">
                         Reserved
                     </td>
                 </div>

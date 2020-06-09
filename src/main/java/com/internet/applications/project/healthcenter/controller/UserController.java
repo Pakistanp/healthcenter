@@ -41,7 +41,12 @@ public class UserController {
     }
 
     @GetMapping("/login")
-    public String loginPage(@RequestParam(required = false) String registeredUser) {
+    public String loginPage() {
+        return "login";
+    }
+
+    @GetMapping("/logout")
+    public String logoutPage() {
         return "login";
     }
 

@@ -1,5 +1,6 @@
 package com.internet.applications.project.healthcenter.controller;
 
+import com.internet.applications.project.healthcenter.model.User;
 import com.internet.applications.project.healthcenter.service.UserService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +20,10 @@ public class HomeController {
 
     @GetMapping("/")
     public ModelAndView homePage(HttpServletRequest request) {
+        User user = userService.getUserByUsername(request.getRemoteUser());
         ModelAndView modelAndView = new ModelAndView("home");
-        modelAndView.addObject( "role", userService.getUserByUsername(request.getRemoteUser()).getType());
+        modelAndView.addObject( "role", user.getType());
+        modelAndView.addObject( "user", user);
         return modelAndView;
     }
 }

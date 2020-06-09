@@ -81,9 +81,10 @@ public class ScheduleDAO {
 
     public List<Schedule> findByPatientId(int id) {
         return jdbcTemplate.query(
-                "SELECT id, startdate, doctor_id, patient_id " +
-                        "FROM schedule " +
-                        "WHERE patient_id = ? "
+                "SELECT schedule.* " +
+                        "FROM schedule, visits " +
+                        "WHERE schedule.id = visits.schedule_id " +
+                        "AND schedule.patient_id = ? "
                 ,
                 preparedStatement -> preparedStatement.setInt(1, id),
                 scheduleRowMapper);

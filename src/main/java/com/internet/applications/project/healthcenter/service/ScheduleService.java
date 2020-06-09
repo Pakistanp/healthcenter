@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -37,6 +38,15 @@ public class ScheduleService {
     private final ScheduleDAO scheduleDAO;
     @NonNull
     private final UserDAO userDAO;
+
+    public HashMap<Integer, User> getAllPatients() {
+        HashMap<Integer, User> allPatients = new HashMap<>();
+        List<User> patients = userDAO.getAllPatients();
+        for (User user : patients) {
+            allPatients.put(user.getId(),user);
+        }
+        return allPatients;
+    }
 
     public List<Schedule> findByDoctorId(int id) {
         return scheduleDAO.findByDoctorId(id);

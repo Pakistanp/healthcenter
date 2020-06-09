@@ -2,6 +2,7 @@ package com.internet.applications.project.healthcenter.controller;
 
 import com.internet.applications.project.healthcenter.model.Schedule;
 import com.internet.applications.project.healthcenter.model.User;
+import com.internet.applications.project.healthcenter.model.Visit;
 import com.internet.applications.project.healthcenter.model.VisitDetails;
 import com.internet.applications.project.healthcenter.service.UserService;
 import com.internet.applications.project.healthcenter.service.VisitService;
@@ -55,7 +56,9 @@ public class VisitController {
     public ModelAndView visitPage(@PathVariable("visitId") int visitId, @RequestParam(value = "schedule") int scheduleId,
                                   HttpServletRequest request) {
         User user = userService.getUserByUsername(request.getRemoteUser());
+        Visit visit = visitService.getVisitById(visitId);
         ModelAndView modelAndView = new ModelAndView("visit");
+        modelAndView.addObject("visit", visit);
         modelAndView.addObject("visitId", visitId);
         modelAndView.addObject("scheduleId", scheduleId);
         modelAndView.addObject("mode", "MODE_VISIT");

@@ -43,6 +43,17 @@ public class UserDAO  {
                 preparedStatement -> preparedStatement.setString(1, "doc"),
                 userRowMapper);
     }
+
+    public List<User> getAllPatients() {
+        return jdbcTemplate.query(
+                "SELECT id, fname, lname, pesel, email, phonenumber, password, type " +
+                        "FROM users " +
+                        "WHERE type = ? "
+                ,
+                preparedStatement -> preparedStatement.setString(1, "user"),
+                userRowMapper);
+    }
+
     public User getUserWithEmail(String pesel) {
         List<User> users = jdbcTemplate.query(
                 "SELECT id, fname, lname, pesel, email, phonenumber, password, type " +

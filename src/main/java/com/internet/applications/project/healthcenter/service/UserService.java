@@ -52,4 +52,5 @@ public class UserService implements UserDetailsService {
     public List<User> getAllDoctors() {
         return userDAO.getAllDoctors();
     }
+
 }

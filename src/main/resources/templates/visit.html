@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://thymeleaf.org">
-<!-- Bootstrap CSS -->
+
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 
-<!------ Include the above in your HEAD tag ---------->
+
 <head>
     <meta charset="UTF-8">
     <title>Register in Health Center!</title>
@@ -20,10 +20,12 @@
             <a class="nav-item nav-link" href="/">Home </a>
             <a class="nav-item nav-link" href="/doctors">Doctors</a>
             <a class="nav-item nav-link active" href="#">My Visits<span class="sr-only">(current)</span></a>
+            <a class="nav-item nav-link" href="/logout">Logout</a>
         </div>
         <div class="navbar-nav" th:if="${role} == 'doc'">
             <a class="nav-item nav-link" href="#">Home</a>
             <a class="nav-item nav-link active" href="#">Schedule <span class="sr-only">(current)</span></a>
+            <a class="nav-item nav-link" href="/logout">Logout</a>
         </div>
     </div>
 </nav>
@@ -59,7 +61,8 @@
     </table>
 </div>
 <div th:if="${mode} == 'MODE_VISIT'">
-    <form class="form-horizontal" action='' th:action="@{/visit/{visitId}?schedule={scheduleId} (visitId=${visitId}, scheduleId=${scheduleId})}" method="POST" enctype="multipart/form-data">
+    <center>
+    <form class="form-horizontal" action='' th:action="@{/visit/{visitId}?schedule={scheduleId} (visitId=${visitId}, scheduleId=${scheduleId})}" method="POST" enctype="multipart/form-data" id="visit">
         <fieldset>
             <div id="legend">
                 <legend class="">Visit</legend>
@@ -67,22 +70,31 @@
             <div class="control-group">
                 <!-- First name -->
                 <label class="control-label" >Diagnose</label>
-                <div class="controls">
-                    <input type="text" id="diagnosis" name="diagnosis" placeholder="" class="input-xlarge">
+                <div class="controls" th:if="${role} == 'user'">
+                    <textarea name="diagnosis" form="visit" class="input-xlarge" cols="100" rows="10" th:text="${visit != null} ? ${visit.diagnosis} : ''" disabled></textarea>
+                </div>
+                <div class="controls" th:if="${role} == 'doc'">
+                    <textarea id="diagnosis" name="diagnosis" form="visit" class="input-xlarge" cols="100" rows="10" th:text="${visit != null} ? ${visit.diagnosis} : ''"></textarea>
                 </div>
             </div>
-            <input type="file" name="file" />
+            <div th:if="${role} == 'doc'">
+                <input type="file" name="file" />
+            </div>
             <a th:href="@{/visit?id={visitId} (visitId=${visitId})}">
                 Open File
             </a>
             <div class="control-group">
                 <!-- Button -->
-                <div class="controls">
+                <div class="controls" th:if="${role} == 'user'">
+                    <button class="btn btn-success" disabled>Save</button>
+                </div>
+                <div class="controls" th:if="${role} == 'doc'">
                     <button class="btn btn-success">Save</button>
                 </div>
             </div>
         </fieldset>
     </form>
+    </center>
 </div>
 </body>
 
