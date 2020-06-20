@@ -131,7 +131,6 @@ public class ScheduleService {
         Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
 
         Message message = Message.creator(
-                //new PhoneNumber("+48602277802"),
                 new PhoneNumber("+48" + patient.getPhoneNumber()),
                 new PhoneNumber(SERVICE_PHONE_NUMBER),
                 stringBuilder.toString()).create();
